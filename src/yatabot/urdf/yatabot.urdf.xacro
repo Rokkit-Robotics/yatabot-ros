@@ -1,0 +1,117 @@
+<?xml version="1.0"?>
+
+<robot name="yatabot" xmlns:xacro="http://ros.org/wiki/xacro">
+
+        <xacro:property name="width" value="0.18" />
+        <xacro:property name="length" value="0.18" />
+        <xacro:property name="height" value="0.08" />
+        <xacro:property name="wheelark_length" value="0.09" />
+        <xacro:property name="wheelark_depth" value="0.02" />
+        <xacro:property name="clearance" value="0.021" />
+        <xacro:property name="caster_diam" value="0.02" />
+
+        <xacro:property name="wheeldiam" value="0.085" />
+        <xacro:property name="wheelbase" value="0.16" />
+        <xacro:property name="wheelwidth" value="0.015" />
+        <xacro:property name="pi" value="3.141592" />
+
+        <material name="white">
+                <color rgba="1 1 1 1" />
+        </material>
+        
+        <material name="black">
+                <color rgba="0 0 0 1" />
+        </material>
+
+        <xacro:macro name="default_inertial" params="mass">
+                <inertial>
+                        <mass value="${mass}" />
+                        <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0" />
+                </inertial>
+        </xacro:macro>
+
+        <link name="base_link">
+                <visual>
+                        <origin xyz="-${width/2} -${length/2} -${height/2}" rpy="0.0 0.0 ${pi/2}" />
+                        <geometry>
+                                <mesh filename="package://yatabot/meshes/yatabot_body.stl" scale="0.001 0.001 0.001" />
+                        </geometry>
+                        <material name="white" />
+                </visual>
+                <collision>
+                        <geometry>
+				<box size="${width} ${length} ${height}" />
+                        </geometry>
+                </collision>
+                <inertial>
+                        <mass value="1.2" />
+                        <origin xyz="0.05 0 0" />
+                        <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0" />
+                </inertial>
+        </link>
+
+        <xacro:macro name="wheel" params="prefix base reflect">
+                <link name="${prefix}_wheel">
+                        <visual>
+                                <origin xyz="0 0 0" rpy="${pi/2} 0 0 " />
+                                <geometry>
+                                        <cylinder radius="${wheeldiam/2}" length="${wheelwidth}" />
+                                </geometry>
+                                <material name="black" />
+                        </visual>
+                        <collision>
+                                <origin xyz="0 0 0" rpy="${pi/2} 0 0 " />
+                                <geometry>
+                                        <cylinder radius="${wheeldiam/2}" length="${wheelwidth}" />
+                                </geometry>
+                        </collision>
+                        <xacro:default_inertial mass="0.2" />
+                </link>
+                <joint name="${prefix}_wheel_joint" type="continuous">
+                        <axis xyz="0 1 0" rpy="0 0 0" />
+                        <parent link="${base}" />
+                        <child link="${prefix}_wheel" />
+                        <origin xyz="0 ${wheelbase*reflect / 2} -${clearance}" rpy="0 0 0" />
+                </joint>
+                <gazebo reference="${prefix}_wheel">
+                        <mu1 value="200.0" />
+                        <mu2 value="100.0" />
+                        <kp value="1000000.0" />
+                        <kd value="1.0" />
+                        <material>Gazebo/Grey</material>
+                </gazebo>
+                <transmission name="${prefix}_wheel_trans">
+                        <type>transmission_interface/SimpleTransmission</type>
+                        <actuator name="${prefix}_wheel_motor">
+                                <mechanicalReduction>1</mechanicalReduction>
+                        </actuator>
+                        <joint name="${prefix}_wheel_joint">
+                                <hardwareInterface>VelocityJointInterface</hardwareInterface>
+                        </joint>
+                </transmission>
+        </xacro:macro>
+
+	<xacro:wheel prefix="left" base="base_link" reflect="1" />
+        <xacro:wheel prefix="right" base="base_link" reflect="-1" />
+
+        <link name="caster">
+                <visual>
+                        <geometry>
+                                <sphere radius="${caster_diam/2}" />
+                        </geometry>
+                        <material name="white" />
+                </visual>
+                <collision>
+                        <geometry>
+                                <sphere radius="${caster_diam/2}" />
+                        </geometry>
+                </collision>
+                <xacro:default_inertial mass="0.05" />
+        </link>
+        <joint name="caster_joint" type="fixed">
+                <parent link="base_link" />
+                <child link="caster" />
+                <origin xyz="0.06 0 -${height/2+clearance-caster_diam/2}" rpy="0 0 0"/>
+        </joint>
+
+</robot>
