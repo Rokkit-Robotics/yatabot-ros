@@ -1,0 +1,21 @@
+<launch>
+  <arg name="model" default="$(find yatabot)/urdf/yatabot.urdf.xacro"/>
+  <arg name="rvizconfig" default="$(find yatabot)/rviz/yatabot.rviz" />
+
+  <include file="$(find urdf_sim_tutorial)/launch/gazebo.launch">
+    <arg name="model" value="$(arg model)" />
+  </include>
+
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(arg rvizconfig)" />
+
+  <rosparam command="load"
+            file="$(find yatabot)/config/diffdrive.yaml"
+            ns="yatabot_diff_drive_controller" />
+
+  <node name="yatabot_controller_spawner" pkg="controller_manager" type="spawner"
+    args="yatabot_diff_drive_controller"/>
+
+  <node name="rqt_robot_steering" pkg="rqt_robot_steering" type="rqt_robot_steering">
+    <param name="default_topic" value="/yatabot_diff_drive_controller/cmd_vel"/>
+  </node>
+</launch>
