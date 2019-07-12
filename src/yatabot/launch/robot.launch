@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="port" default="/dev/ttyTHS1" />
+
+  <arg name="model" default="$(find yatabot)/urdf/yatabot.urdf.xacro"/>
+  
+  <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" />
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher" />
+  <param name="robot_description" command="$(find xacro)/xacro $(arg model)" />
+  
+  <rosparam command="load" file="$(find yatabot)/config/diffdrive.yaml" ns="yatabot_diff_drive_controller" />
+  
+  <node name="yatabot_base" pkg="yatabot_base" type="yatabot_base_node">
+    <param name="port" value="$(arg port)" />
+    <param name="cmd_mul" value="100.0" />
+  </node>
+
+  <node name="base_controller_spawner" pkg="controller_manager" type="spawner" args="yatabot_diff_drive_controller" />
+
+  <!--<node name="teleop_keyboard" pkg="teleop_twist_keyboard" type="teleop_twist_keyboard.py">
+    <remap from="/cmd_vel" to="/yatabot_diff_drive_controller/cmd_vel" />
+  </node>-->
+  
+  <node name="rqt_robot_steering" pkg="rqt_robot_steering" type="rqt_robot_steering">
+    <param name="default_topic" value="/yatabot_diff_drive_controller/cmd_vel"/>
+  </node>
+</launch>
