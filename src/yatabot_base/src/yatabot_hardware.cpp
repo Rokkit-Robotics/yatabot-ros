@@ -19,22 +19,34 @@ Yatabot::Yatabot(const std::string& port, double in_cmd_mul)
   jnt_velocity_interface.registerHandle(vel_handle_right);
 
   registerInterface(&jnt_velocity_interface);
+
+  // initialize hardware
+  uint8_t data[4];
+  data[0] = '@';
+  data[1] = 1;
+  data[2] = 0x01; // chassis
+  data[3] = 0x01; // enable
+
+  if (serial.write(data, sizeof(data)) != sizeof(data)) {
+    ROS_ERROR("failed to write chassis enable cmd");
+  }
 }
 
 void Yatabot::dump_cmd() {
-  uint8_t data[7];
+  uint8_t data[8];
 
   data[0] = '@';
-  data[1] = 4;
+  data[1] = 5;
   data[2] = 0x01;  // chassis control
+  data[3] = 0x02;  // write
 
   int16_t left = static_cast<int16_t>(cmd[0] * cmd_mul);
   int16_t right = static_cast<int16_t>(cmd[0] * cmd_mul);
 
-  data[3] = left & 0xFF;
-  data[4] = (left >> 8) & 0xFF;
-  data[5] = right & 0xFF;
-  data[6] = (right >> 8) & 0xFF;
+  data[4] = left & 0xFF;
+  data[5] = (left >> 8) & 0xFF;
+  data[6] = right & 0xFF;
+  data[7] = (right >> 8) & 0xFF;
 
   if (serial.write(data, sizeof(data)) != sizeof(data)) {
     ROS_ERROR("failed to write cmd to serial");
