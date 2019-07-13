@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<launch>
+  <include file="$(find yatabot)/launch/robot.launch" />
+
+  <arg name="joy_dev" default="/dev/input/js0" />
+
+  <param name="joy_node/dev" value="$(arg joy_dev)" />
+  <param name="joy_node/autorepeat_rate" value="5.0" />
+  <node name="joy_node" pkg="joy" type="joy_node" />
+
+  <node name="teleop_twist_joy" pkg="teleop_twist_joy" type="teleop_node">
+    <rosparam command="load" file="$(find yatabot)/config/teleop-xbox.yaml" />
+    <remap from="/cmd_vel" to="/yatabot_diff_drive_controller/cmd_vel" />
+  </node>
+</launch>

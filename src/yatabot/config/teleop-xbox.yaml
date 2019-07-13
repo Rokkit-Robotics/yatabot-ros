@@ -1,0 +1,7 @@
+axis_linear: 3
+scale_linear: 0.25
+
+axis_angular: 2
+scale_angular: 2.0
+
+enable_button: 5
