@@ -15,7 +15,11 @@
   <node name="yatabot_controller_spawner" pkg="controller_manager" type="spawner"
     args="yatabot_diff_drive_controller"/>
 
-  <node name="rqt_robot_steering" pkg="rqt_robot_steering" type="rqt_robot_steering">
+  <!--<node name="rqt_robot_steering" pkg="rqt_robot_steering" type="rqt_robot_steering">
     <param name="default_topic" value="/yatabot_diff_drive_controller/cmd_vel"/>
+  </node>-->
+
+  <node name="camshift" pkg="cv_demo" type="cv_demo_camshift.py">
+    <remap from="input_rgb_image" to="/yatabot/camera1/image_raw" />
   </node>
 </launch>
