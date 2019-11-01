@@ -1,0 +1,54 @@
+<?xml version="1.0"?>
+
+<robot xmlns:xacro="http://ros.org/wiki/xacro" name="demo_head">
+  <xacro:property name="pi" value="3.141592" />
+
+  <xacro:macro name="eye" params="name base disp_xyz disp_rpy origin_xyz">
+    <link name="${name}_origin" />
+    <link name="${name}_display">
+    </link>
+
+    <joint name="${base}_to_${name}_origin" type="fixed">
+      <parent link="${base}" />
+      <child link="${name}_origin" />
+      <origin xyz="${origin_xyz}" />
+    </joint>
+
+    <joint name="${base}_to_${name}_display" type="fixed">
+      <parent link="${base}" />
+      <child link="${name}_display" />
+      <origin xyz="${disp_xyz}" rpy="${disp_rpy}" />
+    </joint>
+  </xacro:macro>
+
+  <xacro:macro name="eyepair" params="base xyz rpy ox oy oz dx dy dr dp dyaw">
+    <link name="eyepair_base" />
+
+    <xacro:eye name="left" 
+               base="eyepair_base" 
+               origin_xyz="-${ox} ${oy} ${oz}"
+               disp_xyz="-${dx} ${dy} 0"
+               disp_rpy="${dr} ${dp * -1} ${dyaw * -1}" />
+    <xacro:eye name="right"
+               base="eyepair_base"
+               origin_xyz="${ox} ${oy} ${oz}"
+               disp_xyz="${dx} ${dy} 0"
+               disp_rpy="${dr} ${dp} ${dyaw}" />
+
+    <joint name="eyepair_base_to_${base}" type="fixed">
+      <parent link="${base}" />
+      <child link="eyepair_base" />
+      <origin xyz="${xyz}" rpy="${rpy}" />
+    </joint>
+  </xacro:macro>
+
+  <link name="base" />
+
+  <xacro:eyepair base="base"
+                 xyz="0 0 0.1"
+                 rpy="0 0 0"
+                 ox="0.03" oy="0.04" oz="0"
+                 dx="0.04" dy="0.05"
+                 dr="${pi/2}" dp="${pi - 0.1}" dyaw="-${pi/6}" />
+
+</robot>

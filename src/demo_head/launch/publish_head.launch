@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+
+<launch>
+  <arg name="head_model" value="$(find demo_head)/urdf/demo_head.urdf.xacro" />
+  
+  <param name="robot_description" command="$(find xacro)/xacro $(arg head_model)" />
+
+  <node pkg="joint_state_publisher" name="joint_state_publisher" type="joint_state_publisher" />
+  <node pkg="robot_state_publisher" name="robot_state_publisher" type="state_publisher" />
+</launch>

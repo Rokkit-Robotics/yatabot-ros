@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+
+<launch>
+  <arg name="rvizconfig" value="$(find eyes_drawer)/config/demo_head.rviz" />
+
+  <!-- Head model publisher -->
+  <include file="$(find demo_head)/launch/publish_head.launch" />
+
+  <!-- Actual eye drawer -->
+  <node name="eyes_drawer" pkg="eyes_drawer" type="eyes_drawer_node" required="true">
+    <param name="topics_ns" value="eyes" />
+    <param name="test_image" value="$(find eyes_drawer)/images/eye_demo.png" />
+    <param name="img_width" value="320" />
+    <param name="img_height" value="240" />
+  </node>
+
+  <!-- Rviz -->
+  <node pkg="rviz" name="rviz" type="rviz" args="-d $(arg rvizconfig)" required="true" />
+
+</launch>
