@@ -5,6 +5,13 @@
 
   <!-- Head model publisher -->
   <include file="$(find demo_head)/launch/publish_head.launch" />
+  
+  <!-- World basepoint -->
+  <node pkg="tf" type="static_transform_publisher" name="world_broadcaster" args="0 0 0 0 0 0 world base 100" />
+  
+  <!-- Point of interest -->
+  <node pkg="poi_test_publisher" type="poi_test_publisher.py" name="poi_test_publisher" />
+  <!--<node pkg="tf" type="static_transform_publisher" name="poi_broadcaster" args="-0.08 0.2 0.25 0 0 0 world point_of_interest 100" />-->
 
   <!-- Actual eye drawer -->
   <node name="eyes_drawer" pkg="eyes_drawer" type="eyes_drawer_node" required="true">
@@ -13,6 +20,7 @@
     <param name="img_width" value="320" />
     <param name="img_height" value="240" />
   </node>
+
 
   <!-- Rviz -->
   <node pkg="rviz" name="rviz" type="rviz" args="-d $(arg rvizconfig)" required="true" />

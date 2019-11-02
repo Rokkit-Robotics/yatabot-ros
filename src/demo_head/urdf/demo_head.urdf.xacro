@@ -47,7 +47,7 @@
   <xacro:eyepair base="base"
                  xyz="0 0 0.1"
                  rpy="0 0 0"
-                 ox="0.03" oy="0.04" oz="0"
+                 ox="0.035" oy="0.025" oz="-0.007"
                  dx="0.04" dy="0.05"
                  dr="${pi/2}" dp="${pi - 0.1}" dyaw="-${pi/6}" />
 
